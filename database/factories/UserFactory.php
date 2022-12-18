@@ -2,11 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use DateTime;
 use Illuminate\Support\Str;
-use Laravel\Jetstream\Features;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
 {
@@ -24,11 +23,30 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+
+        $ic_no = $this->faker->regexify('[0]{1}[0-4]{1}[0]{1}[1-9]{1}[0-2]{1}[0-9]{1}[0]{1}[1-9]{1}[0-9]{4}');
+
+        $ic_birthday = DateTime::createFromFormat('ymd', substr($ic_no, 0, 6));
+        $dateCurrent  = new DateTime();
+
+        if ($ic_birthday > $dateCurrent) {
+            $ic_birthday->modify('-100 years');
+        }
+
+        $age = $dateCurrent->diff($ic_birthday)->y;
+
+        $ic_gender = (int) substr($ic_no, 11);
+        $gender = ($ic_gender % 2 == 0) ? 'female' : 'male';
+
         return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique->email,
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => \Hash::make('password'),
+            'phone_no' => $this->faker->mobileNumber(true, false),
+            'ic_no' => $ic_no,
+            'age' => $age,
+            'gender' => $gender,
             'remember_token' => Str::random(10),
         ];
     }
@@ -45,25 +63,5 @@ class UserFactory extends Factory
                 'email_verified_at' => null,
             ];
         });
-    }
-
-    /**
-     * Indicate that the user should have a personal team.
-     *
-     * @return $this
-     */
-    public function withPersonalTeam()
-    {
-        if (! Features::hasTeamFeatures()) {
-            return $this->state([]);
-        }
-
-        return $this->has(
-            Team::factory()
-                ->state(function (array $attributes, User $user) {
-                    return ['name' => $user->name.'\'s Team', 'user_id' => $user->id, 'personal_team' => true];
-                }),
-            'ownedTeams'
-        );
     }
 }
