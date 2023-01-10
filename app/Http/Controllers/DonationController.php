@@ -14,7 +14,9 @@ class DonationController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('view-any', Donation::class);
+
+        return view('app.donations.index', compact('donations', 'search'));
     }
 
     /**
@@ -24,7 +26,9 @@ class DonationController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Donation::class);
+
+        return view('app.donations.create', compact('programs', 'users'));
     }
 
     /**
@@ -35,7 +39,15 @@ class DonationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', Donation::class);
+
+        $validated = $request->validated();
+
+        $donation = Donation::create($validated);
+
+        return redirect()
+            ->route('donations.edit', $donation)
+            ->withSuccess(__('crud.common.created'));
     }
 
     /**
@@ -46,7 +58,9 @@ class DonationController extends Controller
      */
     public function show(Donation $donation)
     {
-        //
+        $this->authorize('view', $donation);
+
+        return view('app.donations.show', compact('donation'));
     }
 
     /**
@@ -57,7 +71,13 @@ class DonationController extends Controller
      */
     public function edit(Donation $donation)
     {
-        //
+        $this->authorize('update', $donation);
+
+
+        return view(
+            'app.donations.edit',
+            compact('donation', 'programs', 'users')
+        );
     }
 
     /**
