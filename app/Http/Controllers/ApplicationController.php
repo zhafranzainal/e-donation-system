@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Applciation;
 
 class ApplicationController extends Controller
 {
@@ -12,13 +14,16 @@ class ApplicationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $applications = Application::all();
+        $this->authorize('list', Application::class);
 
-        return view('application.index', [
-            'applications' => $applications,
-        ]);
+        $search = $request->get('search', '');
+        $applications = Application::where('student_id', 'like', "%{$search}%")->paginate(10);
+
+        return view('application.index')
+            ->with('applications', $applications)
+            ->with('search', $search);
     }
 
     /**
@@ -28,7 +33,9 @@ class ApplicationController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Application::class);
+
+        return view('application.create-application');
     }
 
     /**
@@ -39,7 +46,17 @@ class ApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        anctum::actingAs(request()->user(), [], 'web');
+
+        $this->authorize('create', Application::class);
+
+        $data = $this->validate($request, [
+            'student_id' => 'required|unique:roles|max:32',
+        ]);
+
+        return redirect()
+            ->route('application.update-application')
+            ->withSuccess(__('crud.common.created'));
     }
 
     /**
@@ -50,7 +67,9 @@ class ApplicationController extends Controller
      */
     public function show(Application $application)
     {
-        //
+        $this->authorize('view', Application::class);
+
+        return view('application.show-application');
     }
 
     /**
@@ -61,7 +80,10 @@ class ApplicationController extends Controller
      */
     public function edit(Application $application)
     {
-        //
+        $this->authorize('update', $application);
+
+        return view('application.update-application')
+            ->with('application', $application);
     }
 
     /**
@@ -84,6 +106,12 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
-        //
+        $this->authorize('delete', $application);
+
+        $application->delete();
+
+        return redirect()
+            ->route('application.index')
+            ->withSuccess(__('crud.common.removed'));
     }
 }
