@@ -6,6 +6,7 @@ use App\Models\Application;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\Models\Applciation;
+use Spatie\Permission\Models\Permission;
 
 class ApplicationController extends Controller
 {
@@ -46,18 +47,16 @@ class ApplicationController extends Controller
      */
     public function store(Request $request)
     {
-        anctum::actingAs(request()->user(), [], 'web');
+        $application = new Application();
+        $application->student_id = $request->input('student_id');
+        $application->amount = $request->input('amount');
+        $application->reason = $request->input('reason');
+        $application->save();
+        
+        return redirect('/applications');
 
-        $this->authorize('create', Application::class);
-
-        $data = $this->validate($request, [
-            'student_id' => 'required|unique:roles|max:32',
-        ]);
-
-        return redirect()
-            ->route('application.update-application')
-            ->withSuccess(__('crud.common.created'));
     }
+
 
     /**
      * Display the specified resource.
@@ -82,11 +81,8 @@ class ApplicationController extends Controller
     {
         $this->authorize('update', $application);
 
-        return view('application.update-application')
+        return view('application.update-application', compact('application'))
             ->with('application', $application);
-        $status = DB::table('applications')
-            ->groupBy('status')
-            ->get();
     }
 
     /**
@@ -98,7 +94,22 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
-        //
+        $this->authorize('update', $application);
+
+        $data = $this->validate($request, [
+            'student_id' => 'required|max:32|unique:applications,student_id,'.$application->student_id,
+            'amount' => 'required:applications,amount,'.$application->amount,
+            'reason' => 'required:applications,reason,'.$application->reason,
+        ]);
+
+        $application->update($data);
+        
+        $application = Application::find($request->applications);
+        $application->syncApplication($application);
+
+        return redirect()
+            ->route('application.index', $application->id)
+            ->withSuccess(__('crud.common.saved'));
     }
 
     /**
