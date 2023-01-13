@@ -84,6 +84,9 @@ class ApplicationController extends Controller
 
         return view('application.update-application')
             ->with('application', $application);
+        $status = DB::table('applications')
+            ->groupBy('status')
+            ->get();
     }
 
     /**
