@@ -25,7 +25,7 @@
                             </form>  
                         </div>
                         <div class="md:w-1/2 text-right">
-                            @can('create', App\Models\Application::class)
+                            <!-- @can('create', App\Models\Application::class) -->
                             <a
                                 href="{{ route('applications.create') }}"
                                 class="button button-primary"
@@ -33,7 +33,7 @@
                                 <i class="mr-1 icon ion-md-add"></i>
                                 @lang('crud.common.create')
                             </a>
-                            @endcan
+                            <!-- @endcan -->
                         </div> 
                     </div>
                 </div> 
@@ -75,7 +75,7 @@
                                     {{ $application->status ?? 'Status' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">
-                                    {{ $application->approved_at ?? 'Approved' }}
+                                    {{ $application->approved_at ?? '' }}
                                 </td>
                         
                                 <td
@@ -91,21 +91,24 @@
                                             align-left
                                         "
                                     >
-                                        @can('update', $applications)
-                                        <a
-                                            href="{{ route('applications.edit', $application) }}"
-                                            class="mr-1"
-                                        >
-                                            <button
-                                                type="button"
-                                                class="button"
+                                        @if($application->status=='pending')
+                                            <!-- @can('update', $applications) -->
+                                            <a
+                                                href="{{ route('applications.edit', $application) }}"
+                                                class="mr-1"
                                             >
-                                                <i
-                                                    class="icon ion-md-create"
-                                                ></i>
-                                            </button>
-                                        </a>
-                                        @endcan @can('view', $application)
+                                                <button
+                                                    type="button"
+                                                    class="button"
+                                                >
+                                                    <i
+                                                        class="icon ion-md-create"
+                                                    ></i>
+                                                </button>
+                                            </a>
+                                            <!-- @endcan   -->
+                                        @endif
+                                        <!-- @can('view', $application) -->
                                         <a
                                             href="{{ route('applications.show', $application) }}"
                                             class="mr-1"
@@ -117,7 +120,8 @@
                                                 <i class="icon ion-md-eye"></i>
                                             </button>
                                         </a>
-                                        @endcan @can('delete', $application)
+                                        <!-- @endcan  -->
+                                        <!-- @can('delete', $application) -->
                                         <form
                                             action="{{ route('applications.destroy', $application) }}"
                                             method="POST"
@@ -137,7 +141,41 @@
                                                 ></i>
                                             </button>
                                         </form>
-                                        @endcan
+                                        <!-- @endcan  -->
+                                        @if($application->status=='pending')
+                                            <!-- @can('approve', $applications) -->
+                                            <a
+                                                href="{{ route('applications.approve', $application) }}"
+                                                onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                                class="mr-1"
+                                            >
+                                                @csrf @method('PUT')
+                                                <button
+                                                    type="button"
+                                                    class="button"
+                                                >
+                                                    <i
+                                                        class="icon ion-md-checkmark"
+                                                    ></i>
+                                                </button>
+                                            </a>
+                                            <!-- @endcan -->
+                                            <!-- @can('reject', $applications) -->
+                                            <a
+                                                href="{{ route('applications.reject', $application) }}"
+                                                class="mr-1"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    class="button"
+                                                >
+                                                    <i
+                                                        class="icon ion-md-close"
+                                                    ></i>
+                                                </button>
+                                            </a>
+                                            <!-- @endcan -->
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

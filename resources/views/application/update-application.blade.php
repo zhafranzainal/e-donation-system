@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Update Application
+            Edit Application
         </h2>
     </x-slot>
 
@@ -9,12 +9,12 @@
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <x-partials.card>
                 <div class="block w-full overflow-auto scrolling-touch">
-                    <form method="POST">
+                    <form action="{{ route('applications.update) }}" method="PUT">
                     @csrf
-                        <div>
-                            <x-jet-label for="student_id" value="{{ __('Student ID') }}" />
-                            <x-jet-input id="student_id" class="block mt-1 w-full" type="text" name="student_id" :value="old('student_id')" required autofocus autocomplete="student_id" />
-                        </div>
+                    <div class="mt-4">
+                        <x-jet-label for="student_id" value="{{ __('Student ID') }}" />
+                        <x-jet-input id="student_id" type="text" class="mt-1 block w-full" wire:model.defer="state.student_id" autocomplete="student_id" />
+                    </div>
 
                         <div class="mt-4">
                             <x-jet-label for="amount" value="{{ __('Amount') }}" />
@@ -32,23 +32,6 @@
                                 </select>
                             <x-jet-input-error for="reason" class="mt-2" />
                         </div>
-
-                        @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-                            <div class="mt-4">
-                                <x-jet-label for="terms">
-                                    <div class="flex items-center">
-                                        <x-jet-checkbox name="terms" id="terms" required />
-
-                                        <div class="ml-2">
-                                            {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                                                    'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Terms of Service').'</a>',
-                                                    'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 hover:text-gray-900">'.__('Privacy Policy').'</a>',
-                                            ]) !!}
-                                        </div>
-                                    </div>
-                                </x-jet-label>
-                            </div>
-                        @endif
 
                         <div class="flex items-center justify-end mt-4">
 

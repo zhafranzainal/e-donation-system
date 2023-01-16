@@ -31,3 +31,5 @@ Route::prefix('/')->middleware(['auth:sanctum', 'verified'])->group(function () 
     Route::resource('applications', ApplicationController::class);
     Route::resource('donations', DonationController::class);
 });
+Route::put('applications/approve', [ApplicationController::class, 'approve'])->name('applications.approve');
+Route::put('applications/reject', [ApplicationController::class, 'reject'])->name('applications.reject');

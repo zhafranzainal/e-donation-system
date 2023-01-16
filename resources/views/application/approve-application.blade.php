@@ -58,8 +58,14 @@
                                             inline-flex
                                             align-middle
                                         ">
-                                            @can('update', $role)
+                                             @can('update', $role)
                                                 <a href="{{ route('roles.edit', $role) }}" class="mr-1">
+                                                    <button type="button" class="button">
+                                                        <i class="icon ion-md-create"></i>
+                                                    </button>
+                                                </a>
+                                                @endcan @can('approve', $role)
+                                                <a href="{{ route('applications.approve', $role) }}" class="mr-1">
                                                     <button type="button" class="button">
                                                         <i class="icon ion-md-create"></i>
                                                     </button>
@@ -75,12 +81,7 @@
                                                     onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="button">
-                                                        <i
-                                                            class="
-                                                        icon
-                                                        ion-md-trash
-                                                        text-red-600
-                                                    "></i>
+                                                        <i class="icon ion-md-trash text-red-600"></i>
                                                     </button>
                                                 </form>
                                             @endcan

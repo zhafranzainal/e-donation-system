@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\Models\Applciation;
 use Spatie\Permission\Models\Permission;
@@ -17,7 +18,7 @@ class ApplicationController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('list', Application::class);
+        // $this->authorize('list', Application::class);
 
         $search = $request->get('search', '');
         $applications = Application::where('student_id', 'like', "%{$search}%")->paginate(10);
@@ -34,7 +35,7 @@ class ApplicationController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Application::class);
+        // $this->authorize('create', Application::class);
 
         return view('application.create-application');
     }
@@ -48,7 +49,7 @@ class ApplicationController extends Controller
     public function store(Request $request)
     {
         $application = new Application();
-        $application->student_id = $request->input('student_id');
+        $application->student_id = Auth::id();
         $application->amount = $request->input('amount');
         $application->reason = $request->input('reason');
         $application->save();
@@ -66,7 +67,7 @@ class ApplicationController extends Controller
      */
     public function show(Application $application)
     {
-        $this->authorize('view', Application::class);
+        // $this->authorize('view', Application::class);
 
         return view('application.show-application');
     }
@@ -79,10 +80,7 @@ class ApplicationController extends Controller
      */
     public function edit(Application $application)
     {
-        $this->authorize('update', $application);
-
-        return view('application.update-application', compact('application'))
-            ->with('application', $application);
+        return view('application.update-application');
     }
 
     /**
@@ -94,10 +92,7 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
-        $this->authorize('update', $application);
-
         $data = $this->validate($request, [
-            'student_id' => 'required|max:32|unique:applications,student_id,'.$application->student_id,
             'amount' => 'required:applications,amount,'.$application->amount,
             'reason' => 'required:applications,reason,'.$application->reason,
         ]);
@@ -107,11 +102,36 @@ class ApplicationController extends Controller
         $application = Application::find($request->applications);
         $application->syncApplication($application);
 
-        return redirect()
-            ->route('application.index', $application->id)
-            ->withSuccess(__('crud.common.saved'));
+        return redirect('/applications');
     }
 
+    public function approve(Request $request, Application $application)
+    {
+
+        // $this->authorize('approve', $application);
+
+        $application
+            ->update('approve')
+            ->updatetimestamps();
+        
+        return redirect('/applications');
+    }
+
+    public function reject(Request $request, Application $application)
+    {
+        // $this->authorize('update', $application);
+
+        $data = $this->validate($request, [
+            'status' => 'required:applications,status,'.$application->status,
+        ]);
+
+        $application->update($data);
+        
+        $application = Application::find($request->applications);
+        $application->syncApplication($application);
+
+        return redirect('/applications');
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -120,12 +140,10 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
-        $this->authorize('delete', $application);
+        // $this->authorize('delete', $application);
 
         $application->delete();
 
-        return redirect()
-            ->route('application.index')
-            ->withSuccess(__('crud.common.removed'));
+        return redirect('/applications');
     }
 }
