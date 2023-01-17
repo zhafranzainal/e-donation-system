@@ -108,10 +108,12 @@ class ApplicationController extends Controller
 
         // $this->authorize('approve', $application);
 
-        $application
-            ->update('approve')
-            ->updatetimestamps();
-        
+        $this->authorize('approve', $application);
+        $application->status = 'approved';
+        $application->approved_at = now();
+
+        $application->update();
+
         return redirect('/applications');
     }
 
@@ -119,16 +121,12 @@ class ApplicationController extends Controller
     {
         // $this->authorize('update', $application);
 
-        $data = $this->validate($request, [
-            'status' => 'required:applications,status,'.$application->status,
-        ]);
+        $this->authorize('reject', $application);
+        $application->status = 'rejected';
 
-        $application->update($data);
-        
-        $application = Application::find($request->applications);
-        $application->syncApplication($application);
+        $application->update();
 
-        return redirect('/applications');
+        return redirect('/applications');    
     }
     /**
      * Remove the specified resource from storage.
@@ -144,4 +142,13 @@ class ApplicationController extends Controller
 
         return redirect('/applications');
     }
+
+    public function payment(Application $application)
+    {
+        $application->status = 'completed';
+        return view('application.index')
+            ->with('applications', $application);
+        
+    }
+
 }

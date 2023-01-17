@@ -102,7 +102,7 @@
                                                     class="button"
                                                 >
                                                     <i
-                                                        class="icon ion-md-create"
+                                                        class="icon ion-md-create text-blue-600"
                                                     ></i>
                                                 </button>
                                             </a>
@@ -126,55 +126,80 @@
                                             action="{{ route('applications.destroy', $application) }}"
                                             method="POST"
                                             onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                            class="mr-1"
                                         >
                                             @csrf @method('DELETE')
                                             <button
                                                 type="submit"
                                                 class="button"
                                             >
-                                                <i
-                                                    class="
-                                                        icon
-                                                        ion-md-trash
-                                                        text-red-600
-                                                    "
-                                                ></i>
+                                                <i class="icon ion-md-trash text-red-600"></i>
                                             </button>
                                         </form>
                                         @endcan 
                                         @if($application->status=='pending')
-                                            @can('approve', $applications)
-                                            <a
-                                                href="{{ route('applications.approve', $application) }}"
+                                            @can('approve', $application)
+                                            <form
+                                                action="{{ route('applications.approve', $application) }}"
+                                                method="POST"
                                                 onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                                 class="mr-1"
                                             >
-                                                @csrf @method('APPROVE')
+                                                @csrf @method('PUT')
                                                 <button
-                                                    type="button"
+                                                    type="submit"
                                                     class="button"
                                                 >
                                                     <i
-                                                        class="icon ion-md-checkmark"
+                                                        class="
+                                                            icon
+                                                            ion-md-checkmark
+                                                            text-green-600
+                                                        "
                                                     ></i>
                                                 </button>
-                                            </a>
+                                            </form>
                                             @endcan
-                                            @can('reject', $applications)
-                                            <a
-                                                href="{{ route('applications.reject', $application) }}"
+                                            @can('reject', $application)
+                                            <form
+                                                action="{{ route('applications.reject', $application) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                                 class="mr-1"
+                                            >
+                                                @csrf @method('PUT')
+                                                <button
+                                                    type="submit"
+                                                    class="button"
+                                                >
+                                                    <i
+                                                        class="
+                                                            icon
+                                                            ion-md-close
+                                                            text-red-600
+                                                        "
+                                                    ></i>
+                                                </button>
+                                            </form>
+                                            @endcan
+                                        @endif
+                                        @if($application->status=='approved')
+                                        @can('payment', $applications)
+                                            <a
+                                                href="{{ route('applications.payment', $application) }}"
+                                                class="mr-1"
+                                                method="PUT"
                                             >
                                                 <button
                                                     type="button"
                                                     class="button"
                                                 >
                                                     <i
-                                                        class="icon ion-md-close"
+                                                        class="icon ion-md-cash text-green-600"
                                                     ></i>
                                                 </button>
                                             </a>
-                                            @endcan
+                                            @endcan  
                                         @endif
                                     </div>
                                 </td>

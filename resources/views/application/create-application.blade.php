@@ -11,11 +11,6 @@
                 <div class="block w-full overflow-auto scrolling-touch">
                     <form action="{{ route('applications.store') }}" method="POST">
                     @csrf
-                        <div>
-                            <x-jet-label for="student_id" value="{{ __('Student ID') }}" />
-                            <x-jet-input id="student_id" class="block mt-1 w-full" type="text" name="student_id" :value="old('student_id')" disabled  />
-                        </div>
-
                         <div class="mt-4">
                             <x-jet-label for="amount" value="{{ __('Amount') }}" />
                             <x-jet-input id="amount" class="block mt-1 w-full" type="number" name="amount" :value="old('amount')" required />
