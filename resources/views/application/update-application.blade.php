@@ -12,7 +12,6 @@
                     <form action="{{ route('applications.update', $applications) }}" method="POST" >
                     @csrf
                     @method('PUT')
-
                         <div class="mt-4">
                             <x-jet-label for="amount" value="{{ __('Amount') }}" />
                             <x-jet-input id="amount" class="block mt-1 w-full" type="number" name="amount" :value="old('amount')" required />
