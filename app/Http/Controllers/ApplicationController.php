@@ -80,7 +80,8 @@ class ApplicationController extends Controller
      */
     public function edit(Application $application)
     {
-        return view('application.update-application');
+        return view('application.update-application')
+            ->with('applications', $application);
     }
 
     /**
@@ -92,17 +93,14 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
-        $data = $this->validate($request, [
-            'amount' => 'required:applications,amount,'.$application->amount,
-            'reason' => 'required:applications,reason,'.$application->reason,
-        ]);
+        $this->authorize('update', $application);
+        $application->amount = $request->input('amount');
+        $application->reason = $request->input('reason');
+        $application->update();
 
-        $application->update($data);
-        
-        $application = Application::find($request->applications);
-        $application->syncApplication($application);
-
-        return redirect('/applications');
+        return redirect()
+            ->route('applications.edit', $application->id)
+            ->withSuccess(__('crud.common.saved'));
     }
 
     public function approve(Request $request, Application $application)

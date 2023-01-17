@@ -9,12 +9,9 @@
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <x-partials.card>
                 <div class="block w-full overflow-auto scrolling-touch">
-                    <form action="{{ route('applications.update) }}" method="PUT">
+                    <form action="{{ route('applications.update', $applications) }}" method="POST" >
                     @csrf
-                    <div class="mt-4">
-                        <x-jet-label for="student_id" value="{{ __('Student ID') }}" />
-                        <x-jet-input id="student_id" type="text" class="mt-1 block w-full" wire:model.defer="state.student_id" autocomplete="student_id" />
-                    </div>
+                    @method('PUT')
 
                         <div class="mt-4">
                             <x-jet-label for="amount" value="{{ __('Amount') }}" />
