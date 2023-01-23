@@ -30,4 +30,5 @@ Route::prefix('/')->middleware(['auth:sanctum', 'verified'])->group(function () 
     Route::resource('permissions', PermissionController::class);
     Route::resource('applications', ApplicationController::class);
     Route::resource('donations', DonationController::class);
+    Route::resource('report', ReportController::class);
 });
