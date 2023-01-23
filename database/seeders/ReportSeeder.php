@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Report;
 use Illuminate\Database\Seeder;
 
 class ReportSeeder extends Seeder
@@ -14,6 +14,7 @@ class ReportSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Report::factory()->count->create();
+        //maybe no need to run this seeder
     }
 }

@@ -14,8 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('reports', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id'); // report id
+            $table->foreignId('user_id')->nullable();
+            $table->string('description')->nullable(); //description for th report
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
