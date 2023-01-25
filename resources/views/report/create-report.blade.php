@@ -11,20 +11,19 @@
                 <div class="block w-full overflow-auto scrolling-touch">
                     <form action="{{ route('reports.store') }}" method="POST">
                     @csrf
-                        <!-- <div class="mt-4">
-                            <x-jet-label for="user_id" value="{{ __('Amount') }}" />
-                            <x-jet-input id="amount" class="block mt-1 w-full" type="number" name="amount" :value="old('amount')" required />
-                        </div> -->
+                        <div class="mt-4">
+                            <x-jet-label for="totalAmount" value="{{ __('Total Amount') }}" />
+                            <x-jet-input id="totalAmount" class="block mt-1 w-full" type="number" name="totalAmount" :value="old('totalAmount')" required />
+                        </div>
 
                         <div class="mt-4">
-                            <x-jet-label for="reason" value="{{ __('Reason') }}" />
-                                <select name="reason" class ="mt-1 block w-full border-grey-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-                                    <option value="tuition">Tuition</option>
-                                    <option value="hostel">Hostel</option>
-                                    <option value="convocation">Convocation</option>
-                                    <option value="course">Course</option>
-                                    <option value="muet">Muet</option>
-                                </select>
+                            <x-jet-label for="totalDonation" value="{{ __('Total Donation') }}" />
+                            <x-jet-input id="totalDonation" class="block mt-1 w-full" type="number" name="totalDonation" :value="old('totalAmount')" required />
+                        </div>
+
+                        <div class="mt-4">
+                            <x-jet-label for="reason" value="{{ __('Description') }}" />
+                            <textarea id="description" class="form-input rounded-md shadow-sm mt-1 block w-full" name="description" required>{{ old('description') }}</textarea>
                             <x-jet-input-error for="description" class="mt-2" />
                         </div>
 

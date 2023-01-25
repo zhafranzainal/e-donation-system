@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Report extends Model
 {
     use HasFactory;
-    use Searchable;
-    use SoftDeletes;
+
 
     protected $fillable = [
         'user_id',

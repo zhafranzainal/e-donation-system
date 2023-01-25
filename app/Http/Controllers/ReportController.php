@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Role;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
@@ -33,21 +34,9 @@ class ReportController extends Controller
         //$this->authorize('view-any', Report::class);
         //return view('report.admin-report');
         $search = $request->get('search', '');
-        $reports = Report::where('user_id', 'like', "%{$search}%")->paginate(10);
-        $data= Report::select('id', 'created_at')
-                                        ->get()
-                                        ->groupBy(function($data){
-                                            return Carbon::parse($data->created_at)
-                                            ->format('M');
-                                        });
+        $reports = Report::where('id', 'like', "%{$search}%")->paginate(10);
         
-        $months=[];
-        $monthCount=[];
-        foreach($data as $month => $values){
-            $months[]=$month;
-            $monthCount[]=count($values);
-        }
-        return view('report.admin-report',['data'=>$data, 'months'=>$months, 'monthCount'=>$monthCount])
+        return view('report.admin-report')
         ->with('reports', $reports)
         ->with('search',$search);
         
@@ -88,6 +77,8 @@ class ReportController extends Controller
     {
         $report = new Report();
         $report->user_id = Auth::id();
+        $report->totalAmount = $request->input('totalAmount');
+        $report->totalDonation = $request->input('totalDonation');
         $report->description = $request->input('description');
         $report->save();
 
@@ -103,8 +94,20 @@ class ReportController extends Controller
     public function show(Report $report)
     {
         //this->authorize('view', Report::class);
-
-        return view('report.show-report');
+        $data= Report::select('totalAmount', 'created_at')
+                                        ->get()
+                                        ->groupBy(function($data){
+                                            return Carbon::parse($data->created_at)
+                                            ->format('M');
+                                        });
+        
+        $months=[];
+        $monthCount=[];
+        foreach($data as $month => $values){
+            $months[]=$month;
+            $monthCount[]=count($values);
+        }
+        return view('report.show-report',['data'=>$data, 'months'=>$months, 'monthCount'=>$monthCount]);
     }
 
     /**
@@ -129,6 +132,8 @@ class ReportController extends Controller
     public function update(Request $request, Report $report)
     {
         this->authorize('update', $report);
+        $report->totalAmount = $request->input('totalAmount');
+        $report->totalDonation = $request->input('totalDonation');
         $report->description = $request->input('description');
         $report->update();
 
