@@ -12,6 +12,10 @@
                     <form action="{{ route('reports.store') }}" method="POST">
                     @csrf
                         <div class="mt-4">
+                            <h>Total Application Amount : {{$totalAmount}}</h><br><br>
+                            <h>Total Donation Amount : {{$totalDonation}}</h><br><br>
+                            <h>Remaining Amount : {{$remainingAmount}}</h><br><br>
+                            <h>Remaining Donation : {{$remainingDonation}}</h><br><br>
                             <x-jet-label for="totalAmount" value="{{ __('Total Amount') }}" />
                             <x-jet-input id="totalAmount" class="block mt-1 w-full" type="number" name="totalAmount" :value="old('totalAmount')" required />
                         </div>
@@ -22,7 +26,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <x-jet-label for="reason" value="{{ __('Description') }}" />
+                            <x-jet-label for="description" value="{{ __('Description') }}" />
                             <textarea id="description" class="form-input rounded-md shadow-sm mt-1 block w-full" name="description" required>{{ old('description') }}</textarea>
                             <x-jet-input-error for="description" class="mt-2" />
                         </div>

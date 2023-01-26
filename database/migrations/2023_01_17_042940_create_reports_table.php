@@ -18,8 +18,9 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable();
             $table->float('totalAmount');
             $table->float('totalDonation');
-            $table->string('description')->nullable(); //description for the report
-        
+            $table->string('description')->nullable()
+             //description for the report
+            ->default('Annual Report');
             $table->timestamps();
             $table->softDeletes();
         });

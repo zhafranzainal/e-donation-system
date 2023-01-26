@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\Staff;
 use App\Models\User;
 use App\Models\Role;
+use PDF;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Requests\UpdateReportRequest;
+
+use App\Charts\TotalApplication;
+use App\Charts\Users;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,26 +39,36 @@ class ReportController extends Controller
         //return view('report.admin-report');
         $search = $request->get('search', '');
         $reports = Report::where('id', 'like', "%{$search}%")->paginate(10);
+        $totalApplication = DB::table('applications')->count();
+
+        $students = Student::orderBy('year')->pluck('id','year');
         
-        return view('report.admin-report')
+        $chart = new Users;
+        $chart->labels($students->keys());
+        $chart->dataset('Student', 'pie', $students->values());
+
+        return view('report.admin-report',compact('chart'))
         ->with('reports', $reports)
-        ->with('search',$search);
+        ->with('search',$search)
+        ->with('totalApplication',$totalApplication);
         
     }
-    /*Chart <function>*/    
-    // public function staffChart()
-    // {
-        
-    //     // $userData = User::select(\DB::raw("COUNT(*) as count"))
-    //     //             ->whereYear('created_at', date('Y'))
-    //     //             ->groupBy(\DB::raw("Month(created_at)"))
-    //     //             ->pluck('count'); 
-    //     // return view('home', compact('userData'));
-        
 
-    //     return view('report.staff-report');
-    // }
-
+    public function indexStaff(Request $request)
+    {
+        
+        $lists = DB::table('students')
+        ->leftJoin('applications','students.id','=','applications.student_id')
+        ->select('students.id','students.matric_no','applications.*',
+        DB::raw('SUM(applications.amount) as total'),
+        DB::raw('COUNT(applications.id) as totalApplication')
+        )
+        ->groupBy('applications.student_id')
+        ->get();
+        return view('report.staff-report')
+        ->with('lists',$lists);
+        
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -63,8 +77,19 @@ class ReportController extends Controller
     public function create()
     {
         //this->authorize('create',Report::class);
+        $totalAmount = DB::table('applications')->sum('amount');
+        $totalDonation = DB::table('donations')->sum('amount');
+        $totalApplication = DB::table('applications')->count();
 
-        return view('report.create-report');
+        $remainingAmount = $totalAmount - $totalDonation;
+        $remainingDonation = $totalDonation - $totalAmount;
+
+        return view('report.create-report')
+        ->with('totalAmount', $totalAmount)
+        ->with('totalDonation', $totalDonation)
+        ->with('totalApplication', $totalApplication)
+        ->with('remainingAmount', $remainingAmount)
+        ->with('remainingDonation', $remainingDonation);
     }
 
     /**
@@ -94,22 +119,16 @@ class ReportController extends Controller
     public function show(Report $report)
     {
         //this->authorize('view', Report::class);
-        $data= Report::select('totalAmount', 'created_at')
-                                        ->get()
-                                        ->groupBy(function($data){
-                                            return Carbon::parse($data->created_at)
-                                            ->format('M');
-                                        });
-        
-        $months=[];
-        $monthCount=[];
-        foreach($data as $month => $values){
-            $months[]=$month;
-            $monthCount[]=count($values);
-        }
-        return view('report.show-report',['data'=>$data, 'months'=>$months, 'monthCount'=>$monthCount]);
-    }
+        $test = Report::all();
 
+        $chart= new TotalApplication;
+        $chart->labels(['January', 'February', 'March', ' April']);
+        $chart->dataset('My dataset', 'line', [10, 25, 13]);
+
+        // download PDF file with download method
+
+        return view('report.show-report',compact('chart'));
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -157,19 +176,6 @@ class ReportController extends Controller
         return redirect('/reports');
     }
 
-    /*Chart <function>*/
-    // public function staffChart()
-    // {
-        
-    //     // $userData = User::select(\DB::raw("COUNT(*) as count"))
-    //     //             ->whereYear('created_at', date('Y'))
-    //     //             ->groupBy(\DB::raw("Month(created_at)"))
-    //     //             ->pluck('count'); 
-    //     // return view('home', compact('userData'));
-        
-
-    //     return view('report.staff-report');
-    // }
 
 }
 

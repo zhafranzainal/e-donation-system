@@ -23,7 +23,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <x-jet-label for="reason" value="{{ __('Description') }}" />
+                            <x-jet-label for="description" value="{{ __('Description') }}" />
                             <textarea id="description" class="form-input rounded-md shadow-sm mt-1 block w-full" name="description" required>{{ old('description') }}</textarea>
                             <x-jet-input-error for="description" class="mt-2" />
                         </div>

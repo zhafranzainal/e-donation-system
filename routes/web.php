@@ -37,4 +37,5 @@ Route::put('applications/{application}/approve', [ApplicationController::class, 
 Route::put('applications/{application}/reject', [ApplicationController::class, 'reject'])->name('applications.reject');
 Route::put('applications/{application}/payment', [ApplicationController::class, 'payment'])->name('applications.payment');
 
-Route::get('/reports', [ReportController::class, 'index']);
+Route::get('/staffReports', [ReportController::class, 'indexStaff']);
+

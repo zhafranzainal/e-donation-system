@@ -6,7 +6,8 @@
     </x-slot>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="{{asset('public')}}/css/styles.css" rel="stylesheet" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-8 lg:px-8">
             <x-partials.card>
@@ -41,56 +42,19 @@
                         </div> 
                     </div>
                 </div> 
-<!-- To create the chart for the index page-->
-
-<!-- <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script type="text/javascript">
-    <div id="container"></div>
-    var totalApplication=; //to be edited
-    Highcharts.chart('container', {
-    data: {
-        table: 'totalApplication'
-    },
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Live births in Norway'
-    },
-    subtitle: {
-        text:
-            'Source: <a href="https://www.ssb.no/en/statbank/table/04231" target="_blank">SSB</a>'
-    },
-    xAxis: {
-        type: 'category'
-    },
-    yAxis: {
-        allowDecimals: false,
-        title: {
-            text: 'Amount'
-        }
-    },
-    tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.name + '</b><br/>' +
-                this.point.y + ' ' + this.point.name.toLowerCase();
-        }
-    }
-});
-
-
-</script> -->
-<!-- Create Chart -->
-
-
+                    <div class="flex">
+                        <div class="w-1/2">
+                        {!! $chart->container() !!}
+                        {!! $chart->script() !!}
+                        </div>
+                    </div>
+                    
 <!--Report Table-->
                 <div class="block w-full overflow-auto scrolling-touch">
+                <button type="submit" class="button button-primary" onclick="window.print();">Export to PDF</button><br><br>
                     <table class="w-full max-w-full mb-4 bg-transparent">
                         <thead class="text-gray-700">
+                            Total Application made : {{$totalApplication}}
                             <tr class="px-4 py-3 text-left">
                                 <th class="px-4 py-3 text-left">
                                     Report ID
