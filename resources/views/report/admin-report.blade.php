@@ -42,28 +42,52 @@
                         </div> 
                     </div>
                 </div> 
+                <h1 class="text-5xl font bold">User Chart</h1><br>
+                <h2 class="text-3xl font bold">
+                    Total User: {{$totalUser}} <br>
+                    Total Student: {{$totalStudent}} <br>
+                    Total Staff: {{$totalStaff}}<br><br>
+                </h2>
                     <div class="flex">
-                        <div class="w-1/2">
-                        {!! $chart->container() !!}
-                        {!! $chart->script() !!}
+                        
+                        <!-- Chart's container -->
+                        <div class="w-1/2"> 
+                        {!! $chart1->container() !!}
+                        {!! $chart1->script() !!}
                         </div>
-                    </div>
+                        <div class="w-1/2">
+                        {!! $chart2->container() !!}
+                        {!! $chart2->script() !!}
+                        </div>
+                        
+                    </div><br><br>
+                    <div class>
+                        {!! $chart3->container() !!}
+                        {!! $chart3->script() !!}
+                        </div>
                     
 <!--Report Table-->
                 <div class="block w-full overflow-auto scrolling-touch">
                 <button type="submit" class="button button-primary" onclick="window.print();">Export to PDF</button><br><br>
                     <table class="w-full max-w-full mb-4 bg-transparent">
                         <thead class="text-gray-700">
-                            Total Application made : {{$totalApplication}}
+                            
+                            <h1 class="text-4xl font bold">Report Table</h1><br>
+                            <a>Total Application Made : {{$totalApplication}}<br></a>
+                            <a style="color : rgb(24, 166, 242);">Total Donation Given : {{$totalDonation}}<br></a>
+                            <a style="color : rgb(255,0,0);">Total Rejected Application : {{$totalRejected}}<br></a>
+                            <a style="color : rgb(242, 191, 24);">Total Pending Application : {{$totalPending}}<br></a>
+                            <a style="color : rgb(63, 189, 28);">Total Approved Application : {{$totalApproved}}<br></a><br>
+                            
                             <tr class="px-4 py-3 text-left">
                                 <th class="px-4 py-3 text-left">
                                     Report ID
                                 </th>
                                 <th class="px-4 py-3 text-left">
-                                    Total Amount
+                                    Total Amount (RM)
                                 </th>
                                 <th class="px-4 py-3 text-left">
-                                    Total Donation
+                                    Total Donation (RM)
                                 </th>
                                 <th class="px-4 py-3 text-left">
                                     Description

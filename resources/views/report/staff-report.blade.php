@@ -43,7 +43,7 @@
                                     Student Name
                                 </th>
                                 <th class="px-4 py-3 text-left">
-                                    Total Amount
+                                    Total Amount (RM)
                                 </th>
                                 <th class="px-4 py-3 text-left">
                                     Total Application Apply

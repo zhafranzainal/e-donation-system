@@ -18,7 +18,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Requests\UpdateReportRequest;
 
-use App\Charts\TotalApplication;
+use App\Charts\Total;
 use App\Charts\Users;
 
 use Illuminate\Http\Request;
@@ -40,17 +40,75 @@ class ReportController extends Controller
         $search = $request->get('search', '');
         $reports = Report::where('id', 'like', "%{$search}%")->paginate(10);
         $totalApplication = DB::table('applications')->count();
+        $totalDonation = DB::table('donations')->count();
+        $totalStudent = DB::table('students')->count();
+        $totalStaff = DB::table('staffs')->count();
+        $totalUser = $totalStudent + $totalStaff;
+        $totalRejected = DB::table('applications')->where('status', 'Rejected')->count();
+        $totalApproved = DB::table('applications')->where('status', 'Approved')->count();
+        $totalPending = DB::table('applications')->where('status', 'Pending')->count();
 
-        $students = Student::orderBy('year')->pluck('id','year');
+        //Student Chart
+        $students = Student::select(DB::raw('COUNT(*) as totalStudent'),
+                                    DB::raw('year as year'))
+                                    ->groupBy('year')
+                                    ->orderBy('year')
+                                    ->pluck('totalStudent','year');
+
+        $chart1 = new Users;
+        $chart1->labels($students->keys());
+        $chart1->dataset('Number of Student', 'pie', $students->values())
+                ->backgroundcolor(['rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 232, 156)',
+                'rgb(119, 252, 197)']);
+
+        //Staff Chart
+        $staffs = Staff::select(DB::raw('COUNT(*) as totalStaff'),
+                                    DB::raw('rank as rank'))
+                                    ->groupBy('rank')
+                                    ->orderBy('rank')
+                                    ->pluck('totalStaff','rank');
+
+        $chart2 = new Users;
+        $chart2->labels($staffs->keys());
+        $chart2->dataset('Number of Staff', 'pie', $staffs->values())
+                ->backgroundcolor(['rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 232, 156)',
+                'rgb(119, 252, 197)']);
+
+        //Line Chart
+        $donations = Donation::select(DB::raw('SUM(amount) as total'),
+                                    DB::raw('MONTHNAME(created_at) as month'))
+                                    ->groupBy('month')
+                                    ->orderBy('month')
+                                    ->pluck('total','month');
         
-        $chart = new Users;
-        $chart->labels($students->keys());
-        $chart->dataset('Student', 'pie', $students->values());
+        $applicationAmount = Application::select(DB::raw('SUM(amount) as total'),
+                                    DB::raw('MONTHNAME(created_at) as month'))
+                                    ->groupBy('month')
+                                    ->orderBy('month')
+                                    ->pluck('total','month');
+        $chart3 = new Total;
+        $chart3->labels($donations->keys());
+        $chart3->dataset('Total Donation', 'line', $donations->values())
+                ->backgroundcolor(['rgb(255, 99, 132, .5)']);
+        $chart3->dataset('Total Application', 'line', $applicationAmount->values())
+                ->backgroundcolor(['rgb(54, 162, 235, .5)']);
 
-        return view('report.admin-report',compact('chart'))
+        //Return view
+        return view('report.admin-report',compact('chart1','chart2','chart3'))
         ->with('reports', $reports)
         ->with('search',$search)
-        ->with('totalApplication',$totalApplication);
+        ->with('totalApplication',$totalApplication)
+        ->with('totalDonation',$totalDonation)
+        ->with('totalRejected',$totalRejected)
+        ->with('totalApproved',$totalApproved)
+        ->with('totalPending',$totalPending)
+        ->with('totalStudent',$totalStudent)
+        ->with('totalStaff',$totalStaff)
+        ->with('totalUser',$totalUser);
         
     }
 
@@ -61,8 +119,7 @@ class ReportController extends Controller
         ->leftJoin('applications','students.id','=','applications.student_id')
         ->select('students.id','students.matric_no','applications.*',
         DB::raw('SUM(applications.amount) as total'),
-        DB::raw('COUNT(applications.id) as totalApplication')
-        )
+        DB::raw('COUNT(applications.id) as totalApplication'))
         ->groupBy('applications.student_id')
         ->get();
         return view('report.staff-report')
@@ -118,16 +175,31 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
+        $id = $report->id;
+        $list =Report::find($id);
         //this->authorize('view', Report::class);
-        $test = Report::all();
+        $donation = Report::select('id','totalDonation')
+        ->where('id','=',"{$id}")
+        ->pluck('totalDonation','id');
 
-        $chart= new TotalApplication;
-        $chart->labels(['January', 'February', 'March', ' April']);
-        $chart->dataset('My dataset', 'line', [10, 25, 13]);
+        $application = Report::select('id','totalAmount')
+        ->where('id','=',"{$id}")
+        ->pluck('totalAmount','id');
 
-        // download PDF file with download method
+        $donationChart= new Total;
+        $donationChart->labels($donation->keys());
+        $donationChart->dataset('Donation for This Report', 'bar', $donation->values())
+        ->backgroundcolor("orange");
 
-        return view('report.show-report',compact('chart'));
+        $applicationAmountChart= new Total;
+        $applicationAmountChart->labels($application->keys());
+        $applicationAmountChart->dataset('Amount of Application Apply for This Report', 'bar', $application->values())
+        ->backgroundcolor("red");
+        
+
+        return view('report.show-report',compact('donationChart','applicationAmountChart'))
+        ->with('id', $id)
+        ->with('list', $list);
     }
     /**
      * Show the form for editing the specified resource.

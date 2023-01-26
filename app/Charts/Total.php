@@ -4,7 +4,7 @@ namespace App\Charts;
 
 use ConsoleTVs\Charts\Classes\Chartjs\Chart;
 
-class TotalApplication extends Chart
+class Total extends Chart
 {
     /**
      * Initializes the chart.

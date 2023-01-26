@@ -14,14 +14,67 @@
         <button type="submit" class="button button-primary" onclick="window.print();">Export to PDF</button>
         </div>
         <br><br>
-        <div class ="container1">
-        <h1>    
-            Total Application
-            
-            {!! $chart->container() !!}
-            {!! $chart->script() !!}
-        </h1>
+        
+        <h1 class='text-5xl font bold'>    
+            Report ID = {{$id}} <br><br>    
+        </h1>  
+        <div class ="flex">  
+            <div class="w-1/2">
+            {!! $donationChart->container() !!}
+            {!! $donationChart->script() !!}
+            </div>
+            <div class="w-1/2">
+            {!! $applicationAmountChart->container() !!}
+            {!! $applicationAmountChart->script() !!}
+            </div>
+        
         </div>
+
+        <table class="w-full max-w-full mb-4 bg-transparent">
+                        <thead class="text-gray-700">
+                            Report Table
+                            <tr class="px-4 py-3 text-left">
+                                <th class="px-4 py-3 text-left">
+                                    Report ID
+                                </th>
+                                <th class="px-4 py-3 text-left">
+                                    Total Amount (RM)
+                                </th>
+                                <th class="px-4 py-3 text-left">
+                                    Total Donation (RM)
+                                </th>
+                                <th class="px-4 py-3 text-left">
+                                    Description
+                                </th>
+                                <th class="px-4 py-3 text-left">
+                                    Created At
+                                </th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody class="text-gray-600">
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-left">
+                                    {{ $list->id?? 'Report ID' }}
+                                </td>
+                                <td class="px-4 py-3 text-left">
+                                    {{ $list->totalAmount?? 'Total Amount' }}
+                                </td>
+                                <td class="px-4 py-3 text-left">
+                                    {{ $list->totalDonation?? 'Total Donation' }}
+                                </td>
+                                <td class="px-4 py-3 text-left">
+                                    {{ $list-> description?? 'Description' }}
+                                </td>
+                                <td class="px-4 py-3 text-left">
+                                    {{ $list->created_at ?? 'Created At' }}
+                                </td>
+                            </tr>
+                            
+
+                        </tbody>
+        </table>
     </div>
     
 </x-app-layout>
