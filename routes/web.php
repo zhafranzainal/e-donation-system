@@ -6,6 +6,7 @@ use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,7 +38,7 @@ Route::put('applications/{application}/approve', [ApplicationController::class, 
 Route::put('applications/{application}/reject', [ApplicationController::class, 'reject'])->name('applications.reject');
 
 
-Route::get('/staffReports', [ReportController::class, 'indexStaff']);
+Route::get('/staffReports', [ReportController::class, 'indexStaff'])->name('reports.staff');
 
 Route::get('/create/fee{donations}', [App\Http\Controllers\DonationController::class, 'createFee'])->name('create:fee');
 Route::get('/bill/payment/{bill_code}', [App\Http\Controllers\DonationController::class, 'billPaymentLink'])->name('bill:payment');
