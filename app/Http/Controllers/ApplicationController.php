@@ -143,12 +143,32 @@ class ApplicationController extends Controller
         return redirect('/applications');
     }
 
-    public function payment(Application $application)
+    public function createFee(Request $request, Application $applications)
     {
-        $application->status = 'completed';
-        return view('application.index')
-            ->with('applications', $application);
-        
+        $code = 'eq04dj7l';
+
+        $bill_object = [
+            'billName' => 'Donation ',
+            'billDescription' => 'Donation for FK student',
+            'billPriceSetting' => 1,
+            'billPayorInfo' => 1,
+            'billAmount' => $applications->amount,
+            'billExternalReferenceNo' => 'ABHDWUDB31NUJ',
+            'billTo' => $applications->id,
+            'billEmail' => 'test@gmail.com',
+            'billPhone' => '0193883222',
+        ];
+        $data = Toyyibpay::createBill($code, (object)$bill_object);
+
+        // $bill_code = $data[0]->BillCode;
+
+        return redirect()->route('bill:payment', $code);
     }
 
+    public function billPaymentLink($bill_code)
+    {
+        $data = Toyyibpay::billPaymentLink($bill_code);
+
+        return redirect()->away("$data");
+    }
 }
