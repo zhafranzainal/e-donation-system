@@ -34,8 +34,7 @@
 
                         <x-dropdown-link href="{{ route('applications.index') }}">Applications</x-dropdown-link>
                         <x-dropdown-link href="{{ route('donations.index') }}">Donations</x-dropdown-link>
-                        <x-dropdown-link href="{{ route('reports.index') }}">Admin Report</x-dropdown-link>
-                        <x-dropdown-link href="{{ route('reports.staff') }}">Staff Report</x-dropdown-link>
+                        <x-dropdown-link href="{{ route('reports.index') }}">Reports</x-dropdown-link>
 
                     </x-nav-dropdown>
                 @endif

@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Toyyibpay;
 use App\Models\Donation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class DonationController extends Controller
 {
@@ -16,11 +14,9 @@ class DonationController extends Controller
      */
     public function index()
     {
-        $donations = Donation::all();
+        $this->authorize('view-any', Donation::class);
 
-        return view('donation.index', [
-            'donations' => $donations,
-        ]);
+        return view('app.donations.index', compact('donations', 'search'));
     }
 
     /**
@@ -30,8 +26,9 @@ class DonationController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Donation::class);
 
-        return view('donation.make-donation');
+        return view('app.donations.create', compact('programs', 'users'));
     }
 
     /**
@@ -42,22 +39,27 @@ class DonationController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Donation::class);
 
-        $donations = new Donation();
-        $donations->user_id = Auth::id();
-        $donations->amount = $request->amount;
-        $donations->save();
-        return redirect()->route('create:fee', $donations);
+        $validated = $request->validated();
+
+        $donation = Donation::create($validated);
+
+        return redirect()
+            ->route('donations.edit', $donation)
+            ->withSuccess(__('crud.common.created'));
     }
 
     /**
      * Display the specified resource.
-     *\Http\RedirectResponse::route()
+     *
      * @param  \App\Models\Donation  $donation
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show(Donation $donation)
     {
+        $this->authorize('view', $donation);
+
         return view('app.donations.show', compact('donation'));
     }
 
@@ -67,12 +69,15 @@ class DonationController extends Controller
      * @param  \App\Models\Donation  $donation
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Donation $donation)
     {
-        $donation = Donation::find(
-            $id
+        $this->authorize('update', $donation);
+
+
+        return view(
+            'app.donations.edit',
+            compact('donation', 'programs', 'users')
         );
-        return view('donation.update-donation', ['donation' => $donation]);
     }
 
     /**
@@ -82,14 +87,9 @@ class DonationController extends Controller
      * @param  \App\Models\Donation  $donation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, Donation $donation)
     {
-        $donation = Donation::find(
-            $request->id
-        );
-        $donation->amount = $request->amount;
-        $donation->save();
-        return redirect('donation.index');
+        //
     }
 
     /**
@@ -101,40 +101,5 @@ class DonationController extends Controller
     public function destroy(Donation $donation)
     {
         //
-    }
-
-    public function getBankFPX()
-    {
-        $ex = Toyyibpay::getBanksFPX();
-        dd($ex);
-    }
-    public function createFee(Request $request, Donation $donations)
-    {
-        $code = 'eq04dj7l';
-
-        $bill_object = [
-            'billName' => 'Donation ',
-            'billDescription' => 'Donation for FK student',
-            'billPriceSetting' => 1,
-            'billPayorInfo' => 1,
-            'billAmount' => $donations->amount,
-            'billExternalReferenceNo' => 'ABHDWUDB31NUJ',
-            'billTo' => $donations->id,
-            'billEmail' => 'test@gmail.com',
-            'billPhone' => '0193883222',
-        ];
-
-        $data = Toyyibpay::createBill($code, (object)$bill_object);
-
-        // $bill_code = $data[0]->BillCode;
-
-        return redirect()->route('bill:payment', $code);
-    }
-
-    public function billPaymentLink($bill_code)
-    {
-        $data = Toyyibpay::billPaymentLink($bill_code);
-
-        return redirect()->away("$data");
     }
 }

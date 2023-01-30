@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Donation List
+            Application List
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-8 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-partials.card>
                 <div class="mb-5 mt-4">
                     <div class="flex flex-wrap justify-between">
@@ -25,12 +25,12 @@
                             </form>
                         </div>
                         <div class="md:w-1/2 text-right">
-                            @can('create', App\Models\Donation::class)
-                                <a href="{{ route('donations.create') }}" class="button button-primary">
+                            {{-- @can('create', App\Models\Role::class)
+                                <a href="{{ route('roles.create') }}" class="button button-primary">
                                     <i class="mr-1 icon ion-md-add"></i>
                                     @lang('crud.common.create')
                                 </a>
-                            @endcan
+                            @endcan --}}
                         </div>
                     </div>
                 </div>
@@ -38,62 +38,40 @@
                 <div class="block w-full overflow-auto scrolling-touch">
                     <table class="w-full max-w-full mb-4 bg-transparent">
                         <thead class="text-gray-700">
-                            <tr class="px-4 py-3 text-left">
+                            <tr>
                                 <th class="px-4 py-3 text-left">
-                                    Donation ID
+                                    @lang('crud.roles.inputs.name')
                                 </th>
-                                <th class="px-4 py-3 text-left">
-                                    User ID
-                                </th>
-                                <th class="px-4 py-3 text-left">
-                                    Amount
-                                </th>
-                                <th class="px-4 py-3 text-left">
-                                    Status
-                                </th>
-                                <th class="px-4 py-3 text-left">
-                                    Operation
-                                </th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600">
-                            @foreach ($donations as $donation)
+                            {{-- @forelse($roles as $role)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-3 text-left">
-                                        {{ $donation->id ?? 'Donation ID' }}
+                                        {{ $role->name ?? '-' }}
                                     </td>
-                                    <td class="px-4 py-3 text-left">
-                                        {{ $donation->user_id ?? 'User ID' }}
-                                    </td>
-                                    <td class="px-4 py-3 text-left">
-                                        {{ $donation->amount ?? 'Amount' }}
-                                    </td>
-                                    <td class="px-4 py-3 text-left">
-                                        {{ $donation->status ?? 'Status' }}
-                                    </td>
-                                    <td class="px-2 py-3 text-center" style="width: 134px;">
+                                    <td class="px-4 py-3 text-center" style="width: 134px;">
                                         <div role="group" aria-label="Row Actions"
                                             class="
                                             relative
                                             inline-flex
-                                            align-left
+                                            align-middle
                                         ">
-                                            @can('update', $donation)
-                                                <a href="{{ route('donations.edit', $donation['id']) }}" class="mr-1">
+                                            @can('update', $role)
+                                                <a href="{{ route('roles.edit', $role) }}" class="mr-1">
                                                     <button type="button" class="button">
                                                         <i class="icon ion-md-create"></i>
                                                     </button>
                                                 </a>
-                                            @endcan
-                                            @can('view', $donation)
-                                                <a href="{{ route('donations.show', $donation) }}" class="mr-1">
+                                                @endcan @can('view', $role)
+                                                <a href="{{ route('roles.show', $role) }}" class="mr-1">
                                                     <button type="button" class="button">
                                                         <i class="icon ion-md-eye"></i>
                                                     </button>
                                                 </a>
-                                            @endcan
-                                            @can('delete', $donation)
-                                                <form action="{{ route('donations.destroy', $donation) }}" method="POST"
+                                                @endcan @can('delete', $role)
+                                                <form action="{{ route('roles.destroy', $role) }}" method="POST"
                                                     onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="button">
@@ -109,20 +87,26 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="2">
+                                        @lang('crud.common.no_items_found')
+                                    </td>
+                                </tr>
+                            @endforelse --}}
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2">
-
+                                    <div class="mt-10 px-4">
+                                        {{-- {!! $roles->render() !!} --}}
+                                    </div>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-
             </x-partials.card>
         </div>
     </div>
-
 </x-app-layout>

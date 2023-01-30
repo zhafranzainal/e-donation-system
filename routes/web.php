@@ -36,10 +36,12 @@ Route::prefix('/')->middleware(['auth:sanctum', 'verified'])->group(function () 
 
 Route::put('applications/{application}/approve', [ApplicationController::class, 'approve'])->name('applications.approve');
 Route::put('applications/{application}/reject', [ApplicationController::class, 'reject'])->name('applications.reject');
-Route::put('applications/{application}/payment', [ApplicationController::class, 'payment'])->name('applications.payment');
+
 
 Route::get('/staffReports', [ReportController::class, 'indexStaff'])->name('reports.staff');
 
-Route::get('/bankFPX', [App\Http\Controllers\DonationController::class, 'getBankFPX'])->name('get:banks');
 Route::get('/create/fee{donations}', [App\Http\Controllers\DonationController::class, 'createFee'])->name('create:fee');
 Route::get('/bill/payment/{bill_code}', [App\Http\Controllers\DonationController::class, 'billPaymentLink'])->name('bill:payment');
+
+Route::get('/create/fee{applications}', [App\Http\Controllers\ApplicationController::class, 'createFee'])->name('create:fee');
+Route::get('/bill/payment/{bill_code}', [App\Http\Controllers\ApplicationController::class, 'billPaymentLink'])->name('bill:payment');
