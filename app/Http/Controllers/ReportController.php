@@ -84,7 +84,7 @@ class ReportController extends Controller
                                     ->groupBy('month')
                                     ->orderBy('month')
                                     ->pluck('total','month');
-        
+
         $applicationAmount = Application::select(DB::raw('SUM(amount) as total'),
                                     DB::raw('MONTHNAME(created_at) as month'))
                                     ->groupBy('month')
@@ -109,12 +109,12 @@ class ReportController extends Controller
         ->with('totalStudent',$totalStudent)
         ->with('totalStaff',$totalStaff)
         ->with('totalUser',$totalUser);
-        
+
     }
 
     public function indexStaff(Request $request)
     {
-        
+
         $lists = DB::table('students')
         ->leftJoin('applications','students.id','=','applications.student_id')
         ->select('students.id','students.matric_no','applications.*',
@@ -124,7 +124,7 @@ class ReportController extends Controller
         ->get();
         return view('report.staff-report')
         ->with('lists',$lists);
-        
+
     }
     /**
      * Show the form for creating a new resource.
@@ -195,7 +195,7 @@ class ReportController extends Controller
         $applicationAmountChart->labels($application->keys());
         $applicationAmountChart->dataset('Amount of Application Apply for This Report', 'bar', $application->values())
         ->backgroundcolor("red");
-        
+
 
         return view('report.show-report',compact('donationChart','applicationAmountChart'))
         ->with('id', $id)
@@ -222,7 +222,7 @@ class ReportController extends Controller
      */
     public function update(Request $request, Report $report)
     {
-        this->authorize('update', $report);
+        $this->authorize('update', $report);
         $report->totalAmount = $request->input('totalAmount');
         $report->totalDonation = $request->input('totalDonation');
         $report->description = $request->input('description');
