@@ -38,7 +38,7 @@ Route::put('applications/{application}/approve', [ApplicationController::class, 
 Route::put('applications/{application}/reject', [ApplicationController::class, 'reject'])->name('applications.reject');
 Route::put('applications/{application}/payment', [ApplicationController::class, 'payment'])->name('applications.payment');
 
-Route::get('/staffReports', [ReportController::class, 'indexStaff']);
+Route::get('/staffReports', [ReportController::class, 'indexStaff'])->name('reports.staff');
 
 Route::get('/bankFPX', [App\Http\Controllers\DonationController::class, 'getBankFPX'])->name('get:banks');
 Route::get('/create/fee{donations}', [App\Http\Controllers\DonationController::class, 'createFee'])->name('create:fee');
