@@ -186,7 +186,7 @@
                                         @if($application->status=='approved')
                                         @can('payment', $applications)
                                             <a
-                                                href="{{ route('applications.payment', $application) }}"
+                                                href="{{ route('create:payment', $application) }}"
                                                 class="mr-1"
                                                 method="PUT"
                                             >
