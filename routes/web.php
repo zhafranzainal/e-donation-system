@@ -6,7 +6,6 @@ use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,6 +32,10 @@ Route::prefix('/')->middleware(['auth:sanctum', 'verified'])->group(function () 
     Route::resource('donations', DonationController::class);
     Route::resource('reports', ReportController::class);
 });
+
 Route::put('applications/{application}/approve', [ApplicationController::class, 'approve'])->name('applications.approve');
 Route::put('applications/{application}/reject', [ApplicationController::class, 'reject'])->name('applications.reject');
 Route::put('applications/{application}/payment', [ApplicationController::class, 'payment'])->name('applications.payment');
+
+Route::get('/staffReports', [ReportController::class, 'indexStaff']);
+

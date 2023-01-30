@@ -16,7 +16,11 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->bigIncrements('id'); // report id
             $table->foreignId('user_id')->nullable();
-            $table->string('description')->nullable(); //description for th report
+            $table->float('totalAmount');
+            $table->float('totalDonation');
+            $table->string('description')->nullable()
+             //description for the report
+            ->default('Annual Report');
             $table->timestamps();
             $table->softDeletes();
         });

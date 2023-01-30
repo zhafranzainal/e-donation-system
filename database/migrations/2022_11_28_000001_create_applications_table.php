@@ -16,15 +16,10 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->foreignId('student_id');
             $table->float('amount');
-            $table->enum('reason', [
-                'tuition',
-                'hostel',
-                'convocation',
-                'course',
-                'muet',
-            ]);
             $table
-                ->enum('status', ['pending', 'rejected', 'approved'])
+                ->enum('reason', ['tuition', 'hostel', 'convocation', 'course', 'muet',]);
+            $table
+                ->enum('status', ['pending', 'rejected', 'approved', 'completed'])
                 ->default('pending');
             $table->timestamp('approved_at')->nullable();
 

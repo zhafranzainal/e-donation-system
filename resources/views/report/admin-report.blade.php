@@ -4,7 +4,10 @@
             Admin Report Index
         </h2>
     </x-slot>
-
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+        <link href="{{asset('public')}}/css/styles.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js" charset="utf-8"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-8 lg:px-8">
             <x-partials.card>
@@ -24,6 +27,8 @@
                                 </div>
                             </form>  
                         </div>
+
+                        
                         <div class="md:w-1/2 text-right">
                             @can('create', App\Models\Report::class)
                             <a
@@ -37,19 +42,52 @@
                         </div> 
                     </div>
                 </div> 
-
+                <h1 class="text-5xl font bold">User Chart</h1><br>
+                <h2 class="text-3xl font bold">
+                    Total User: {{$totalUser}} <br>
+                    Total Student: {{$totalStudent}} <br>
+                    Total Staff: {{$totalStaff}}<br><br>
+                </h2>
+                    <div class="flex">
+                        
+                        <!-- Chart's container -->
+                        <div class="w-1/2"> 
+                        {!! $chart1->container() !!}
+                        {!! $chart1->script() !!}
+                        </div>
+                        <div class="w-1/2">
+                        {!! $chart2->container() !!}
+                        {!! $chart2->script() !!}
+                        </div>
+                        
+                    </div><br><br>
+                    <div class>
+                        {!! $chart3->container() !!}
+                        {!! $chart3->script() !!}
+                        </div>
+                    
+<!--Report Table-->
                 <div class="block w-full overflow-auto scrolling-touch">
+                <button type="submit" class="button button-primary" onclick="window.print();">Export to PDF</button><br><br>
                     <table class="w-full max-w-full mb-4 bg-transparent">
                         <thead class="text-gray-700">
+                            
+                            <h1 class="text-4xl font bold">Report Table</h1><br>
+                            <a>Total Application Made : {{$totalApplication}}<br></a>
+                            <a style="color : rgb(24, 166, 242);">Total Donation Given : {{$totalDonation}}<br></a>
+                            <a style="color : rgb(255,0,0);">Total Rejected Application : {{$totalRejected}}<br></a>
+                            <a style="color : rgb(242, 191, 24);">Total Pending Application : {{$totalPending}}<br></a>
+                            <a style="color : rgb(63, 189, 28);">Total Approved Application : {{$totalApproved}}<br></a><br>
+                            
                             <tr class="px-4 py-3 text-left">
                                 <th class="px-4 py-3 text-left">
                                     Report ID
                                 </th>
                                 <th class="px-4 py-3 text-left">
-                                    Total Amount
+                                    Total Amount (RM)
                                 </th>
                                 <th class="px-4 py-3 text-left">
-                                    Total Donation
+                                    Total Donation (RM)
                                 </th>
                                 <th class="px-4 py-3 text-left">
                                     Description
@@ -59,23 +97,27 @@
                                 </th>
                             </tr>
                         </thead>
+                        
                         <tbody class="text-gray-600">
-                            @foreach($reports as $report)
+                            
+                            
+                        @foreach($reports as $report)
+                            
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-left">
-                                    {{ $report->id ?? 'Report ID' }}
+                                    {{ $report->id?? 'Report ID' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">
-                                    {{ $report-> ?? 'Total Amount' }}
+                                    {{ $report->totalAmount?? 'Total Amount' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">
-                                    {{ $report-> ?? 'Total Donation' }}
+                                    {{ $report->totalDonation?? 'Total Donation' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">
-                                    {{ $report-> ?? 'Description' }}
+                                    {{ $report-> description?? 'Description' }}
                                 </td>
                                 <td class="px-4 py-3 text-left">
-                                    {{ $application->approved_at ?? '' }}
+                                    {{ $report->created_at ?? 'Created At' }}
                                 </td>
                         
                                 <td
@@ -91,10 +133,10 @@
                                             align-left
                                         "
                                     >
-                                        @if($application->status=='pending')
-                                            @can('update', $applications)
+                                        @can('update', $report)
+                                            
                                             <a
-                                                href="{{ route('applications.edit', $application) }}"
+                                                href="{{ route('reports.edit', $report) }}"
                                                 class="mr-1"
                                             >
                                                 <button
@@ -106,11 +148,11 @@
                                                     ></i>
                                                 </button>
                                             </a>
-                                            @endcan  
-                                        @endif
-                                        @can('view', $application)
+                                        @endcan  
+                                        
+                                        @can('view', $report)
                                         <a
-                                            href="{{ route('applications.show', $application) }}"
+                                            href="{{ route('reports.show', $report) }}"
                                             class="mr-1"
                                         >
                                             <button
@@ -121,9 +163,9 @@
                                             </button>
                                         </a>
                                         @endcan 
-                                        @can('delete', $application)
+                                        @can('delete', $report)
                                         <form
-                                            action="{{ route('applications.destroy', $application) }}"
+                                            action="{{ route('reports.destroy', $report) }}"
                                             method="POST"
                                             onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                             class="mr-1"
@@ -137,80 +179,19 @@
                                             </button>
                                         </form>
                                         @endcan 
-                                        @if($application->status=='pending')
-                                            @can('approve', $application)
-                                            <form
-                                                action="{{ route('applications.approve', $application) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
-                                                class="mr-1"
-                                            >
-                                                @csrf @method('PUT')
-                                                <button
-                                                    type="submit"
-                                                    class="button"
-                                                >
-                                                    <i
-                                                        class="
-                                                            icon
-                                                            ion-md-checkmark
-                                                            text-green-600
-                                                        "
-                                                    ></i>
-                                                </button>
-                                            </form>
-                                            @endcan
-                                            @can('reject', $application)
-                                            <form
-                                                action="{{ route('applications.reject', $application) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
-                                                class="mr-1"
-                                            >
-                                                @csrf @method('PUT')
-                                                <button
-                                                    type="submit"
-                                                    class="button"
-                                                >
-                                                    <i
-                                                        class="
-                                                            icon
-                                                            ion-md-close
-                                                            text-red-600
-                                                        "
-                                                    ></i>
-                                                </button>
-                                            </form>
-                                            @endcan
-                                        @endif
-                                        @if($application->status=='approved')
-                                        @can('payment', $applications)
-                                            <a
-                                                href="{{ route('applications.payment', $application) }}"
-                                                class="mr-1"
-                                                method="PUT"
-                                            >
-                                                <button
-                                                    type="button"
-                                                    class="button"
-                                                >
-                                                    <i
-                                                        class="icon ion-md-cash text-green-600"
-                                                    ></i>
-                                                </button>
-                                            </a>
-                                            @endcan  
-                                        @endif
+                                        
+                                        
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            
+                        @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="2">
                                     <div class="mt-10 px-4">
-                                        {!! $applications->render() !!}
+                                        {!! $reports->render() !!}
                                     </div>
                                 </td>
                             </tr>
