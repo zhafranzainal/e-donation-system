@@ -67,12 +67,10 @@ class DonationController extends Controller
      * @param  \App\Models\Donation  $donation
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Donation $donation)
     {
-        $donation = Donation::find(
-            $id
-        );
-        return view('donation.update-donation', ['donation' => $donation]);
+        return view('donation.update-donation')
+        ->with('donations', $donation);
     }
 
     /**
@@ -82,14 +80,15 @@ class DonationController extends Controller
      * @param  \App\Models\Donation  $donation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request,Donation $donation)
     {
-        $donation = Donation::find(
-            $request->id
-        );
-        $donation->amount = $request->amount;
-        $donation->save();
-        return redirect('donation.index');
+        $this->authorize('update', $donation);
+        $donation->amount = $request->input('amount');
+        $donation->update();
+
+        return redirect()
+            ->route('donations.edit', $donation->id)
+            ->withSuccess(__('crud.common.saved'));
     }
 
     /**
@@ -100,7 +99,9 @@ class DonationController extends Controller
      */
     public function destroy(Donation $donation)
     {
-        //
+        $donation->delete();
+
+        return redirect('donation.index');
     }
 
     public function getBankFPX()
@@ -110,7 +111,7 @@ class DonationController extends Controller
     }
     public function createFee(Request $request, Donation $donations)
     {
-        $code = 'eq04dj7l';
+        $code = '01z5mrdn';
 
         $bill_object = [
             'billName' => 'Donation ',
@@ -134,6 +135,7 @@ class DonationController extends Controller
     public function billPaymentLink($bill_code)
     {
         $data = Toyyibpay::billPaymentLink($bill_code);
+        dd($data);
 
         return redirect()->away("$data");
     }

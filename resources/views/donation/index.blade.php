@@ -79,7 +79,7 @@
                                             align-left
                                         ">
                                             @can('update', $donation)
-                                                <a href="{{ route('donations.edit', $donation['id']) }}" class="mr-1">
+                                                <a  href="{{ route('donations.edit', $donation) }}" class="mr-1">
                                                     <button type="button" class="button">
                                                         <i class="icon ion-md-create"></i>
                                                     </button>
@@ -93,19 +93,21 @@
                                                 </a>
                                             @endcan
                                             @can('delete', $donation)
-                                                <form action="{{ route('donations.destroy', $donation) }}" method="POST"
-                                                    onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="button">
-                                                        <i
-                                                            class="
-                                                        icon
-                                                        ion-md-trash
-                                                        text-red-600
-                                                    "></i>
-                                                    </button>
-                                                </form>
-                                            @endcan
+                                        <form
+                                            action="{{ route('donations.destroy', $donation) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                            class="mr-1"
+                                        >
+                                            @csrf @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="button"
+                                            >
+                                                <i class="icon ion-md-trash text-red-600"></i>
+                                            </button>
+                                        </form>
+                                        @endcan
                                         </div>
                                     </td>
                                 </tr>

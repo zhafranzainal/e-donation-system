@@ -11,8 +11,9 @@
                 <div class="mb-5 mt-4">
                     <div class="flex flex-wrap justify-between">
                         <div class="md:w-1/2">
-                            <form action="{{ route('donations.update') }}"method="POST">
+                            <form  action="{{ route('donations.update', $donations) }}" method="POST">
                                 @csrf
+                                @method('PUT')
                                 <div class="mt-4">
                                     <x-jet-label for="amount" value="{{ __('amount') }}" />
                                     <x-jet-input id="amount" class="block mt-1 w-full" type="text"
@@ -28,30 +29,6 @@
                 </div>
         </div>
 
-        <div class="block w-full overflow-auto scrolling-touch">
-            <table class="w-full max-w-full mb-4 bg-transparent">
-                <thead class="text-gray-700">
-                    <tr>
-                        <th class="px-4 py-3 text-left">
-                            @lang('crud.roles.inputs.name')
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600">
-
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="2">
-                            <div class="mt-10 px-4">
-                                {{-- {!! $roles->render() !!} --}}
-                            </div>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
         </x-partials.card>
     </div>
     </div>
