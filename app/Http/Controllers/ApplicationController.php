@@ -69,7 +69,8 @@ class ApplicationController extends Controller
     {
         // $this->authorize('view', Application::class);
 
-        return view('application.show-application');
+        return view('application.show-application')
+        ->with('applications', $application);
     }
 
     /**
@@ -143,7 +144,7 @@ class ApplicationController extends Controller
         return redirect('/applications');
     }
 
-    public function createFee(Request $request, Application $applications)
+    public function createFee(Request $request, Application $application)
     {
         $code = 'eq04dj7l';
 
@@ -152,9 +153,9 @@ class ApplicationController extends Controller
             'billDescription' => 'Donation for FK student',
             'billPriceSetting' => 1,
             'billPayorInfo' => 1,
-            'billAmount' => $applications->amount,
+            'billAmount' => $application->amount,
             'billExternalReferenceNo' => 'ABHDWUDB31NUJ',
-            'billTo' => $applications->id,
+            'billTo' => $application->id,
             'billEmail' => 'test@gmail.com',
             'billPhone' => '0193883222',
         ];
@@ -162,7 +163,12 @@ class ApplicationController extends Controller
 
         // $bill_code = $data[0]->BillCode;
 
+        $this->authorize('completed', $application);
+        $application->status = 'completed';
+        $application->update();
+
         return redirect()->route('bill:payment', $code);
+
     }
 
     public function billPaymentLink($bill_code)
